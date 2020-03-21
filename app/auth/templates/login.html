@@ -1,0 +1,22 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+	<div class="login-form-container">
+		<h4>Login</h4>
+		{{ form.hidden_tag() }}
+		{{ wtf.quick_form(form) }}
+		<a class="forgot-pwd-link" href="{{ url_for('authentication.forgot') }}">Forgot password?</a>
+		<p>Don't have an account? 
+			<span><a href="{{ url_for('authentication.register_user') }}"> Register </a></span>
+		</p>
+	</div>
+{% endblock content %}
+
+{% block script %}
+<script>
+	const form = document.getElementsByClassName("form")[0];
+	const btn = document.getElementsByClassName("btn")[0];
+	form.classList.add("login-form");
+	btn.classList.add("btn-primary");
+</script>
+{% endblock %}

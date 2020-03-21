@@ -1,0 +1,91 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+
+<div class="sort-filter">
+	<div class="sorting">
+		<div class="sort-label">Sort: </div>
+		<div class="btn-group btn-group toggle sort-wrapper" data-toggle="buttons">
+			<label for="age" id="sort-age" class="btn btn-default btn-secondary sorts">
+				Age
+				<input type="radio">
+			</label>
+			<label for="distance" id="sort-distance" class="btn btn-default btn-secondary sorts">
+				Distance
+				<input type="radio">
+			</label> 
+			<label for="tags" id="sort-tags" class="btn btn-default btn-secondary sorts">
+				Matching Tags
+				<input type="radio">
+			</label> 
+			<label for="rating" id="sort-rating" class="btn btn-default btn-secondary sorts active">
+				Rating
+				<input type="radio" checked>
+			</label>
+		</div>
+	</div>
+	<div class="filtering">
+		<div class="filter-label">Filter: </div>
+		<form>
+			<div class="no-wrap">
+				<label class="age-rating-label" for="min-age">Age: </label>
+				<input class="age-rating-input" type="number" name="min-age" id="min-age" min="18" max="100" value="18"> -
+				<input class="age-rating-input" type="number" name="max-age" id="max-age" min="18" max="100" value="100">
+			</div>
+			<div class="no-wrap">
+				<label class="age-rating-label" for="min-rating">Rating:</label>			
+				<input class="age-rating-input" type="number" name="min-rating" id="min-rating" min="0" max="160" value="0"> -
+				<input class="age-rating-input" type="number" name="max-rating" id="max-rating" min="0" max="160" value="160">
+			</div>
+			<div class="no-wrap">
+				<label class="loc-tags-label" for="location">Location</label>
+				<input class="loc-tags-input" type="text" name="filter" id="location">
+			</div>
+			<div class="no-wrap">
+				<label class="loc-tags-label tags-label" for="list-tags">Tags</label>
+				<input class="loc-tags-input tags-input" type="text" name="filter" pattern="[A-Za-z, ]" id="list-tags" placeholder="vegan, dogs, hiphop, ...">
+			</div>
+		</form>
+	</div>
+</div>
+
+<ul class="matches" id="users-list">
+		{% for match in match_results %}
+			<li class="match">
+				<div class="user-tags hideme">{{ match['tags'] }}</div>
+				<div class="user-age hideme">{{ match['age'] }}</div>
+				<div class="user-dist hideme">{{ session['dist'][match['uid']] }}</div>
+				<div class="user-num-tags hideme">{{ session['tags_match'][match['uid']] }}</div>
+				<div class="user-rating hideme">{{ match['rating'] }}</div>
+				<div class="user-pos hideme">{{ match['position'] }}</div>
+				<a href="{{ url_for('main.view_user_profile', user_id=match['uid']) }}">
+					<div class="profile">
+						{% set file = match['profile_pic_url'] %}
+						{% if file  %}
+							<img class="profile-picture" src="{{ file }}">
+						{% else %}
+							<img class="profile-picture" src="{{ url_for('static', filename='img/Blank-Headshot.jpg') }}">
+						{% endif %}
+						<p class="rating">{{ match['rating'] }}</p>
+						<p class="username">{{ match['username'] }}</p>
+						<p class="age-pos">{{ match['age'] }} | {{ match['position'] | default('Earth', true)}}</p>
+
+						{% if session['profile_pic'] == true %}
+							<button class="match-like-btn like-btn" value="{{ match['uid'] }}" type="button">
+								{{ match['like_action'] }}
+							</button>
+						{% else %}
+							<a class="disabled-like-btn" href="">{{ match['like_action'] }}</a>
+						{% endif %}
+					</div>
+				</a>
+			</li>
+		{% endfor %}
+</ul>
+{% endblock %}
+
+{% block script %}
+<script src="{{ url_for('static', filename='script/like.js') }}"></script>
+<script src="{{ url_for('static', filename='script/sort.js') }}"></script>
+<script src="{{ url_for('static', filename='script/filter.js') }}"></script>
+{% endblock %}

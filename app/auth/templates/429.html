@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Matcha</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename = 'css/style.css') }}">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link href="https://fonts.googleapis.com/css?family=Montserrat:500" rel="stylesheet">
+</head>
+<body class="four-two-nine-body">
+	<div class="four-two-nine-container">
+		<h3>Sorry, you've made too many requests ...</h3>
+		<div><img src="{{ url_for('static', filename = 'img/429-error-graphic.png') }}"/></div>
+		<a class="error-home btn btn-secondary" href="{{ url_for('main.home')}}">Home Page</a>
+	</div>
+</body>
+</html>

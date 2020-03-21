@@ -1,0 +1,30 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+	<ul class="matches">
+	{% if blacklist %}
+		{% for user in blacklist %}
+			<li class="profile blocked_users" id="{{ user.User.id }}">
+				{% set url = user.Picture.url %}
+				{% if url  %}
+					<img class="profile-picture" src="{{ url }}">
+				{% else %}
+					<img class="profile-picture" src="{{ url_for('static', filename='img/Blank-Headshot.jpg') }}">
+				{% endif %}
+				<div class="block-info" style="padding:5px;">
+					<p class="username">{{ user.User.username }}</p>
+					<p class="age-pos">{{ user.User.age }} | {{ user.User.position | default('Earth', true)}}</p>
+				</div>
+			</li>
+		{% endfor %}
+	{% else %}
+		<div class="blocks-default-msg">
+			No blocked users
+		</div>
+	{% endif %}
+	</ul>
+{% endblock content %}
+
+{% block script %}
+<script src="{{ url_for('static', filename='script/block.js') }}"></script>
+{% endblock %}

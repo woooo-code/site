@@ -1,0 +1,48 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+	<ul class="matches">
+	{% if whitelist %}
+		{% for user in whitelist %}
+			<li class="match">
+				<a href="{{ url_for('main.view_user_profile', user_id=user.User.id) }}">
+					<div class="profile">
+						{% set url = user.Picture.url %}
+						{% if url  %}
+							<img class="profile-picture" src="{{ url }}">
+						{% else %}
+							<img class="profile-picture" src="{{ url_for('static', filename='img/Blank-Headshot.jpg') }}">
+						{% endif %}
+						<div style="padding:5px;">
+							<p class="username">{{ user.User.username }}</p>
+							<p class="age-pos">{{ user.User.age }} | {{ user.User.position | default('Earth', true)}}</p>
+						</div>
+
+						{% if session['num_pic'] > 0 %}
+							<button class="match-like-btn like-btn whitelist-like" value="{{ user.User.id }}" type="button">
+								{% if user.Like.liked_id %}
+									Unlike
+								{% endif %}
+							</button>		
+						{% else %}
+							<a class="disabled-like-btn" href="">
+								{% if user.Like.liked_id %}
+									Unlike
+								{% endif %}
+							</a>
+						{% endif %}
+					</div>
+				</a>
+			</li>
+		{% endfor %}
+	{% else %}
+		<div class="no-liked-users">
+			You haven't liked anybody yet. Go out and match with others!
+		</div>
+	{% endif %}
+	</ul>
+{% endblock content %}
+
+{% block script %}
+	<script src="{{ url_for('static', filename='script/like.js') }}"></script>
+{% endblock %}

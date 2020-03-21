@@ -1,0 +1,19 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+	<div class="forgot-form-container">
+		<h4>Hurry and reset your password, the love of your life is waiting!<h4>
+			{{ form.hidden_tag() }}
+			{{ wtf.quick_form(form) }}
+		<a class="forgot-home btn btn-secondary" href="{{ url_for('authentication.sign_in_user')}}">Log In Page</a>
+	</div>
+{% endblock %}
+
+{% block script %}
+<script>
+	const form = document.getElementsByClassName("form")[0];
+	const btn = document.getElementsByClassName("btn")[0];
+	form.classList.add("forgot-form");
+	btn.classList.add("btn-primary");
+</script>
+{% endblock %}

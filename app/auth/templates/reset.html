@@ -1,0 +1,19 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+	<div class="reset-form-container">
+		<h3>Reset your password<h3>
+			{{ form.hidden_tag() }}
+			{{ wtf.quick_form(form) }}
+		<a class="reset-home btn btn-secondary" href="{{ url_for('main.home') }}">Home Page</a>
+	</div>
+{% endblock %}
+
+{% block script %}
+<script>
+	const form = document.getElementsByClassName("form")[0];
+	const btn = document.getElementsByClassName("btn")[0];
+	form.classList.add("reset-form");
+	btn.classList.add("btn-primary");
+</script>
+{% endblock %}

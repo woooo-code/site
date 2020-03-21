@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+	<div class="settings-form-container">
+		{{ form.hidden_tag() }}
+		{{ wtf.quick_form(form) }}
+	</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+	const first = document.getElementById("first");
+	const last = document.getElementById("last");
+	const email = document.getElementById("email");
+	const username = document.getElementById("username");
+	const form = document.getElementsByClassName("form")[0];
+	const btn = document.getElementsByClassName("btn")[0];
+	first.placeholder="{{ user.first_name }}"
+	last.placeholder="{{ user.last_name }}"
+	email.placeholder="{{ user.email }}"
+	username.placeholder="{{ user.username }}";
+	form.classList.add("settings-form");
+	btn.classList.add("btn-primary");
+</script>
+{% endblock %}

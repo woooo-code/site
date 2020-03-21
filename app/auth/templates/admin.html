@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+	<ul class="reports">
+		{% if reports %}
+			<li class="report">
+				<div>
+					<p>Username</p>
+					<p>User ID</p>
+					<p>Times Reported</p>
+				</div>
+			</li>
+			{% for report in reports %}
+				<li class="report">
+					<div>
+						<p> {{ report[2] }} </p>
+						<p> {{ report[0] }} </p>
+						<p> {{ report[1] }} </p>
+					</div>
+				</li>
+			{% endfor %}
+		{% else %}
+			<div class="no-reports">
+				No users reported.
+			</div>
+		{% endif %}
+	</ul>
+{% endblock %}

@@ -1,0 +1,222 @@
+{% import 'tags_macros.html' as tags_macros %}
+{% extends 'layout.html' %}
+
+{% block content %}
+	<div>
+		<div class="row profile-pic-info">
+			<!-- User Photos -->
+			<div class="col-md-3">
+				<div class="row main-profile-img">
+					{% if profile_pic  %}
+						<img id="profile-picture" src="{{ profile_pic.url }}" alt="profile picture">
+					{% else %}	
+						<img id="profile-picture" src="/static/img/Blank-Headshot.jpg" alt="profile picture">
+						{% if user.id == current_user_id and not preview %}
+							<div class="profile-center">Upload a profile picture before you can like others!</div>
+						{% endif %}
+					{% endif %}
+						<input class="set-profile btn btn-sm" type="button" value="Set As Profile" name="{{ profile_pic.id | default('N/A') }}">
+						<input class="delete-pic btn btn-sm" type="button" value="X" name="{{ profile_pic.id | default('N/A') }}">
+					{% set pic_count = session['num_pic'] %}
+					{% if user.id == current_user_id and not preview %}
+						<div class="upload-overlay">
+							<div class="upload-container">
+								<button type="button" class="close btn btn-default" aria-label="Close" id="close-upload-btn">
+										<span aria-hidden="true">&times;</span>
+								</button>
+								<div class="upload-img {{ pic_count }}">
+									<label>Upload an Image</label>
+									<input type="file" id="file_input">
+									<button id="file_input_submit">Upload</button>
+								</div>
+							</div>
+						</div>
+					{% endif %}
+				</div>
+				<div class="row thumbnail-container">
+					{% for pic in other_pics %}
+						<img class="thumbnails" id="{{ pic.id }}" src="{{ pic.url }}" alt="picture">
+					{% endfor %}
+					{% if user.id == current_user_id and not preview %}
+						<button class="add-pic-btn btn btn-primary" type="button" style="display:
+																						{% if pic_count < 5 %} block
+																						{% else %} none {% endif%}">+</button>
+					{% endif %}
+				</div>
+			</div>
+			<!-- User Info -->
+			<div class="col-md-9 user-info">
+				<div class="row name-rating">
+					<div class="profile-name">
+						<div class="first-last-name">{{ user.first_name | title }} {{ user.last_name | title }}<span class="profile-username">{{ user.username }}</span></div>
+					</div>
+					{% if user.id != current_user_id or preview %}
+						<div class="profile-rating">
+							{% set id = user.id | string %}
+							{% set rating = session['rating'][id] | default("N/A") %}
+							{{ rating }}
+						</div>
+					{% endif %}
+				</div>
+				<div class="row pos-online"> 
+					<div class="profile-pos">
+						<div class="user-lat hideme">{{ user.lat }}</div>
+						<div class="user-lng hideme">{{ user.lng }}</div>
+						<div id="current-loc">{{ user.position | default('Earth', true) | title }}</div>
+						{% if user.id == current_user_id and not preview %}
+							<button class="btn btn-primary btn-sm glyphicon" id="change-loc-btn" type="button">&#x270f;</button>
+							<div id="loc-popup-overlay">
+								<div id="loc-popup-content">
+									<input id="loc" type="text" name="loc" placeholder="Enter a location">
+									<button class="btn btn-primary btn-sm glyphicon" id="save-loc-btn">&#x2714;</button>
+									<button class="btn btn-primary btn-sm glyphicon" id="close-loc-btn">&#x2718;</button>
+								</div>
+							</div>
+						{% endif %}
+					</div>
+					{% if user.id != current_user_id or preview %}
+						{% if offline %}
+							<div class="offline">
+								Offline <span class="offline-dot"></span><span class="last-online-time">{{ offline }}</span>
+							</div>
+						{% else %}
+							<div class="online">
+								Online <span class="online-dot"></span>
+							</div>
+						{% endif %}
+					{% endif %}
+				</div>
+				<div class="row age-gender-preference">
+					<div class="age-container">
+						<div class="age-label">Age</div>					
+						{% if user.id == current_user_id and not preview %}
+							<input class="form-control" id="age" type="number" name="age" value="{{ user.age }}" min="18" max="100">
+						{% else %}
+							<div class="age" id="current-age">{{ user.age }}</div>	
+						{% endif %}
+					</div>
+					<div class="gender-container">
+						<div class="gender-label">Gender</div>
+						{% if user.id == current_user_id and not preview %}
+							<select id="gender" class="form-control">
+								{% if user.gender == "male" %}
+									{% set other_gender = "female" %}
+								{% else %}
+									{% set other_gender = "male" %}
+								{% endif %}
+								<option value="{{ user.gender }}">{{ user.gender | title }}</option>
+								<option value="{{ other_gender }}">{{ other_gender | title }}</option>
+							</select>
+						{% else %}
+							<div class="gender">{{ user.gender | title }}</div>
+						{% endif %}
+					</div>
+					<div class="preference-container">
+						<div class="preference-label">Interested In</div>					
+						{% if user.id == current_user_id and not preview %}
+							<select id="preference" class="form-control">
+								{% if user.preference == "male" %}
+									{% set other_preference = "female" %}
+									{% set another_preference = "both" %}
+								{% elif user.preference == "female" %}
+									{% set other_preference = "male" %}
+									{% set another_preference = "both" %}
+								{% else %}
+									{% set other_preference = "male" %}
+									{% set another_preference = "female" %}
+								{% endif %}
+								<option value="{{ user.preference }}">{{ user.preference | title }}</option>
+								<option value="{{ other_preference }}">{{ other_preference | title }}</option>
+								<option value="{{ another_preference }}">{{ another_preference | title }}</option>
+							</select>							
+						{% else %}
+							<div class="preference" id="current-preference">{{ user.preference | title }}</div>	
+						{% endif %}
+					</div>
+				</div>
+				<div class="row profile-btn-container">
+					{% if user.id == current_user_id and not preview %}
+						<a class="chat-btn profile-buttons btn btn-default" id="preview-profile" href="{{ url_for('main.view_user_profile', user_id=current_user_id, preview='preview')}}">
+							Preview Profile
+						</a>
+					{% else %}
+						{% if session['profile_pic'] == true %}
+						<button class="like-btn profile-buttons btn btn-default" value="{{ user.id }}" type="button">
+							{{ like_action }}
+						</button>
+						{% else %}
+						<div class="profile-buttons profile-disabled-btn btn btn-default">
+							{{ like_action }}
+						</div>
+						{% endif %}
+						{% if matched == true %}
+						<a class="chat-btn profile-buttons btn btn-default" href="{{ url_for('chats.display_chats', referral_id=user.id) }}">
+							Chat
+						</a>
+						{% else %}
+						<a class="chat-btn profile-buttons btn btn-default profile-disabled-btn" href="javascript:void(0);" disable>
+							Chat
+						</a>
+						{% endif %}
+						<button class="locate-btn profile-buttons btn btn-default" type="button" id="locate">
+							Locate
+						</button>
+						<div id="map-overlay">
+							<div id="map-container">
+								<button type="button" class="close btn btn-default" aria-label="Close" id="close-map-btn">
+									<span aria-hidden="true">&times;</span>
+								</button>
+								<div id="map"></div>
+							</div>
+						</div>
+						<button class="profile-buttons btn btn-default" id="report" value="{{ user.id }}">
+							Report
+						</button>
+						<div id="report-overlay">
+							<div id="report-msg">Thanks!</div>
+						</div>
+						<button class="profile-buttons block btn btn-default" value="{{ user.id }}" type="button">
+							{{ block_button }}
+						</button>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+		<div class="bio">
+			<h4>Biography</h4>
+			{% if user.id == current_user_id and not preview %}
+			<button class="btn btn-primary btn-sm glyphicon" id="edit-bio-btn" type="button" value="Edit">&#x270f;</button>
+			{% endif %}
+			<div class="well bio-interest">
+				<div id="bio-display">
+					{{ user.biography | default("no biography provided :(", true) }}
+				</div>
+				<div id="edit-bio-div">
+					<textarea id="edit-bio" maxlength="1000">{{ user.biography }}</textarea>
+				</div>
+			</div>
+		</div>
+		{% set preview = preview %}
+		{{ tags_macros.add_tags(tags, user, current_user_id, setup, preview) }}
+
+	</div>
+{% endblock %}
+
+{% block script %}
+		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBMfTfgYwXs-WYNlr2BoQta6NHsjh-MNcQ&libraries=places" type="text/javascript"></script>
+	{% if user.id == current_user_id and not preview %}
+		<script src="{{ url_for('static', filename='script/upload_view_pictures.js') }}" type="text/javascript"></script>
+		<script src="{{ url_for('static', filename='script/change_loc.js') }}" type="text/javascript"></script>
+		<script src="{{ url_for('static', filename='script/change_age.js') }}" type="text/javascript"></script>
+		<script src="{{ url_for('static', filename='script/change_gender.js') }}" type="text/javascript"></script>
+		<script src="{{ url_for('static', filename='script/change_preference.js') }}" type="text/javascript"></script>
+		<script src="{{ url_for('static', filename='script/tags.js') }}" type="text/javascript"></script>
+		<script src="{{ url_for('static', filename='script/bio.js') }}" type="text/javascript"></script>
+	{% else %}
+		<script src="{{ url_for('static', filename='script/toggle_pictures.js') }}" type="text/javascript"></script>
+		<script src="{{ url_for('static', filename='script/like.js') }}" type="text/javascript"></script>
+		<script src="{{ url_for('static', filename='script/locate.js') }}" type="text/javascript"></script>
+		<script src="{{ url_for('static', filename='script/report.js') }}" type="text/javascript"></script>
+		<script src="{{ url_for('static', filename='script/block.js') }}" type="text/javascript"></script>
+	{% endif %}
+{% endblock %}

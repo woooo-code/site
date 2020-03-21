@@ -1,0 +1,165 @@
+{% import "bootstrap/wtf.html" as wtf %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+	<!-- Head -->
+	{% block head %}
+		<head>
+			<meta charset="UTF-8">
+			<title> Matcha </title>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<meta name="theme-color" content="#337ab7">
+			<meta name="description" content="Find the love of your life with our dating site Matcha."/>
+			<link type="image/x-icon" rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+			<link href="https://fonts.googleapis.com/css?family=Montserrat:500" rel="stylesheet">
+			<link href="https://fonts.googleapis.com/css?family=Pacifico" rel="stylesheet">
+			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" charset="utf-8">
+			<link rel="stylesheet" href="{{ url_for('static', filename = 'css/style.css') }}">
+			<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" type="text/javascript"></script>
+			<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" type="text/javascript"></script>
+			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		</head>
+	{% endblock head %}
+
+	<!-- body -->
+	{% block body %}
+		{% if landing %}
+			<body style="background-image: url(https://github.com/serena-zhu/Matcha/blob/development/app/static/img/background.jpeg?raw=true);">
+		{%  elif chat_notif %}
+			<body style="background-image: url(https://github.com/serena-zhu/Matcha/blob/development/app/static/img/background2.jpeg?raw=true);">
+		{% else %}
+			<body style="background-image: url(https://github.com/serena-zhu/Matcha/blob/development/app/static/img/background3.jpeg?raw=true);">
+		{% endif %}
+		<div class="wrapper">
+			<div class="logo">
+				<h1><a href="{{ url_for('main.home') }}">Matcha</a></h1>
+			</div>
+			{% if session.get('user_id') %}
+				<!-- navigation bar -->
+				{% block navbar %}
+					<nav class="navbar navbar-inverse">
+						<div class="container">
+							<ul class="topnav nav navbar-nav pull-right topmenu" id="TopMenu">
+								<li>
+									<a href="{{ url_for('main.view_user_profile', user_id=session.get('user_id'))}}"> My Profile </a>
+								</li>
+								<li>
+									<a href="{{ url_for('main.home') }}"> My Matches </a>
+								</li>
+								<li>
+									<a href="{{ url_for('chats.display_chats') }}"> Chats </a>
+								</li>
+								<li>
+									{% set notify = session.get('notif_count') %}
+									{% if notify %}
+									<a id="show_notif" style="color:red" href="{{ url_for('notifications.show_notifications') }}">
+									{% else %}
+									<a id="show_notif" href="{{ url_for('notifications.show_notifications') }}">
+									{% endif %}
+										 Notifications 
+										<span id="notif_count" class="badge" style="color:
+												{% if notify %} red
+												{% else %} silver
+												{% endif %};">
+											{{ notify }}
+										</span>
+									</a>
+								</li>
+								<li id="welcome" value="{{ session.get('user_id') }}" class="dropdown show">
+									<a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown">
+										Hi <b style="color: deeppink">{{ session.get('first_name') | title }}</b>
+										<span class="caret"></span>
+									</a>
+									<ul class="dropdown-menu">
+										{% if session.get('admin') %}
+										<li class="dropdown-item">
+											<a href="{{ url_for('authentication.admin_panel') }}"> Reported Users </a>
+										</li>
+										{% endif %}
+										<li class="dropdown-item">
+											<a href="{{ url_for('visitors.visitors') }}"> Past Visitors </a>
+										</li>
+										<li class="dropdown-item">
+											<a href="{{ url_for('likes.like_page') }}"> Liked Users </a>
+										</li>
+										<li class="dropdown-item">
+											<a href="{{ url_for('blocks.block_page') }}"> Blocked Users </a>
+										</li>
+										<li class="dropdown-item">
+											<a href="{{ url_for('authentication.update_settings') }}"> Settings </a>
+										</li>
+										<li class="divider dropdown-item"></li>
+										<li class="dropdown-item">
+											<a href="{{ url_for('authentication.log_out_user') }}"> Logout </a>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<a href="javascript:void(0);" id="menuicon" onclick="mobileHide()">&#9776;</a>
+								</li>
+							</ul>
+						</div>
+					</nav>
+				{% endblock navbar %}
+			{% endif %}
+
+			<!-- flash messaging -->
+			{% for message in get_flashed_messages() %}
+				<div class="container alert alert-info">
+					<button type="button" class="close" data-dismiss="alert"></button>
+					{{ message }}
+				</div>
+			{% endfor %}
+
+			<!-- empty block for custom content -->
+			{% block content %} {% endblock content %}
+
+
+			</div>
+			<!-- footer -->
+			{% block footer %}
+				<footer>				
+					<div class="copyright">
+						<p class="small"><a href="https://github.com/serena-zhu/Matcha" target="_blank">Matcha</a> &copy; 2018 </p>
+					</div>
+					<div class="credits">
+						<div class="serena">
+							<div class="small">Serena</div>
+							<a href="https://github.com/serena-zhu" class="fa fa-github" target="_blank">&zwj;</a>
+							<a href="https://www.linkedin.com/in/zhu-serena/" class="fa fa-linkedin-square" target="_blank">&zwj;</a>
+						</div>
+						<div class="tab"></div>
+						<div class="joey">
+							<div class="small">Joey</div>
+							<a href="https://github.com/jchung05" class="fa fa-github" target="_blank">&zwj;</a>
+							<a href="https://www.linkedin.com/in/jchung05" class="fa fa-linkedin-square" target="_blank">&zwj;</a>
+						</div>
+					</div>
+				</footer>
+			{% endblock footer %}
+
+		<!-- </div> -->
+		</body>	
+		<script src="{{ url_for('static', filename='script/polling.js') }}" type="text/javascript"></script>
+		<script>
+			const mobileHide = () => {
+			    let x = document.getElementById("TopMenu");
+			    console.log(x);
+			    console.log(x.classList.contains("responsive"));
+			    if (x.classList.contains("responsive")) {
+			        x.classList.remove("responsive");
+			    } else {
+			        x.classList.add("responsive");
+			    }
+			}
+			if(performance.navigation.type == 2){
+				location.reload(true);
+			}
+		</script>	
+		<!-- empty block for script -->
+		{% block script %} {% endblock script %}
+		
+		{% endblock body %}
+
+</html>

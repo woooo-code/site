@@ -1,0 +1,24 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+	<div class="setup-form-container">
+		<h3>Tell Us More About Yourself</h3>
+		{{ form.hidden_tag() }}
+		{{ wtf.quick_form(form) }}
+	</div>
+{% endblock content %}
+
+{% block script %}
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBMfTfgYwXs-WYNlr2BoQta6NHsjh-MNcQ&libraries=places" type="text/javascript"></script>
+<script>
+	const form = document.getElementsByClassName("form")[0];
+	const btn = document.getElementsByClassName("btn")[0];
+	form.classList.add("setup-form");
+	btn.classList.add("btn-primary");
+
+	const pos = document.getElementById("pos");
+	const autocomplete = new google.maps.places.Autocomplete((pos), {
+	types: ['(cities)']
+});
+</script>
+{% endblock %}
