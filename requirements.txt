@@ -40,6 +40,6 @@ WTForms==2.1
 bs4==0.0.1
 beautifulsoup4==4.6.0
 Faker==0.8.15
-lxml==4.2.1
+lxml==4.6.3
 text-unidecode==1.2
 urllib3==1.22
